@@ -21,10 +21,48 @@ def arxiv_posts(theme=DEFAULT_THEME, limit=10):
     return [format_doc(entry['title'], entry['summary']) for entry in xmltodict.parse(data)['feed']['entry']]
 
 
+def sep(text):
+    if text[:1] == '.':
+        return ' '
+    else:
+        return '. '
+
+
 def format_doc(title, body):
-    return "{} : {}".format(title, body).replace("\n", " ")
+    return "{}{}{}".format(title, sep(title), body).replace("\n", " ")
+
+
+def remove_short(docs):
+    return list(filter(lambda doc: len(doc) > 100, docs))
+
+
+def remove_empty_words(words):
+    return list(filter(lambda word: any(c.isalpha() for c in word), words))
+
+
+def words_count(doc):
+    return len(doc.split(' '))
+
+
+def phrases_count(doc):
+    return len(doc.split('.'))
+
+
+def join_docs(docs):
+    return ''.join(['{}{}'.format(doc, sep(doc)) for doc in docs])
 
 
 if __name__ == "__main__":
     docs = reddit_posts() + arxiv_posts()
+    docs = remove_short(docs)
     print(*docs, sep="\n")
+
+    wc = [words_count(doc) for doc in docs]
+    print('\nWords count: {}'.format(wc))
+    print('Total words count: {}'.format(sum(wc)))
+
+    pc = [phrases_count(doc) for doc in docs]
+    print('\nPhrases count: {}'.format(pc))
+    print('Total phrases count: {}'.format(sum(pc)))
+
+    print('Joined text:\n{}'.format(join_docs(docs)))
