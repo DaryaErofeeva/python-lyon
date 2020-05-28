@@ -1,8 +1,10 @@
+import pickle
 from datetime import datetime
 import os
 import praw
 import urllib.request
 import xmltodict
+from corpus import Corpus
 
 DEFAULT_THEME = 'Minecraft'
 REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
@@ -55,6 +57,9 @@ class Author:
         publications_names = [doc.title for doc in self.publications.values()]
         return '\n\nAuthor {} has following publications: \n{}'.format(self.name, '\n\t'.join(publications_names))
 
+    def __eq__(self, other):
+        return self.name == other.name
+
 
 def unix_time_to_date(unix_time):
     return datetime.fromtimestamp(unix_time)
@@ -90,19 +95,40 @@ def arxiv_posts(theme=DEFAULT_THEME, limit=10):
     return [arxiv_entry_to_doc(entry) for entry in xmltodict.parse(data)['feed']['entry']]
 
 
-docs = reddit_posts() + arxiv_posts()
+if __name__ == "__main__":
+    docs = reddit_posts() + arxiv_posts()
 
-collection = {}  # alternative way {i: docs[i] for i in range(len(docs))}
-authors = {}
-for index in range(len(docs)):
-    collection[index] = docs[index]
-    names = docs[index].author.split(', ')
-    for name in names:
-        if name not in [author.name for author in authors.values()]:
-            authors[len(authors)] = Author(name)
-        list(authors.values())[-1].add(docs[index])
+    collection = {}  # alternative way {i: docs[i] for i in range(len(docs))}
+    authors = {}
+    for index in range(len(docs)):
+        collection[index] = docs[index]
+        names = docs[index].author.split(', ')
+        for name in names:
+            author = Author(name)
+            try:
+                author_index = list(authors.values()).index(author)
+                authors[author_index].add(docs[index])
+            except ValueError:
+                author.add(docs[index])
+                authors[len(authors)] = author
 
-id2doc = {key: value.title for key, value in collection.items()}
-id2aut = {key: value.name for key, value in authors.items()}
+    id2doc = {key: value.title for key, value in collection.items()}
+    print(id2doc)
 
-print(*list(authors.values()))
+    id2aut = {key: value.name for key, value in authors.items()}
+    print(id2aut)
+
+    corpus = Corpus('Corpus', authors, id2aut, collection, id2doc, len(collection), len(authors))
+    print(corpus.print())
+
+    print('\n\nSerializing corpus...')
+    corpus.save()
+    print('Corpus serialized')
+    print('Removing corpus instance...')
+    del corpus
+    print('Corpus instance removed')
+    print('Deserializing corpus')
+    with open('data.pickle', 'rb') as f:
+        corpus = pickle.load(f)
+    print('Corpus deserialized')
+    corpus.print()
