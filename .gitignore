@@ -1,3 +1,6 @@
 .idea/
 venv/
 __pycache__/
+*.pickle
+arxiv_response_exmpl.xml
+test.py
