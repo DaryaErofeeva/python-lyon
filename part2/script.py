@@ -4,7 +4,7 @@ import os
 import praw
 import urllib.request
 import xmltodict
-from corpus import Corpus
+from part2.corpus import Corpus
 
 DEFAULT_THEME = 'Minecraft'
 REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
@@ -24,11 +24,11 @@ class Document:
     """
 
     def __init__(self, title, author, date, url, text):
-        self.title = title
+        self.title = title.replace("\n", " ")
         self.author = author
         self.date = date
         self.url = url
-        self.text = text
+        self.text = text.replace("\n", " ")
 
     def __str__(self):
         return '\nTitle: {}\nAuthor: {}\nDate: {}\nUrl: {}'.format(self.title, self.author, self.date, self.url)
