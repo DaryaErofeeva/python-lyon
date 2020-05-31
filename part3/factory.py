@@ -17,13 +17,16 @@ class DocumentsFactory:
         reddit = praw.Reddit(client_id=REDDIT_CLIENT_ID, client_secret=REDDIT_CLIENT_SECRET,
                              user_agent=REDDIT_USER_AGENT)
         subreddit = reddit.subreddit(theme)
-        return [RedditDocument(post) for post in subreddit.new(limit=limit)]
+        filtered_posts = list(filter(lambda post: len(post.selftext) > 100, subreddit.new(limit=limit)))
+        return [RedditDocument(post) for post in filtered_posts]
 
     @staticmethod
     def arxiv_documents(theme=DEFAULT_THEME, limit=10):
         url = 'http://export.arxiv.org/api/query?search_query=all:{}&start=0&max_results={}'.format(theme, limit)
         data = urllib.request.urlopen(url).read()
-        return [ArxivDocument(entry) for entry in xmltodict.parse(data)['feed']['entry']]
+        parsed_data = xmltodict.parse(data)
+        filtered_entries = list(filter(lambda entry: len(entry['summary']) > 100, parsed_data['feed']['entry']))
+        return [ArxivDocument(entry) for entry in filtered_entries]
 
     @staticmethod
     def create_documents(theme=DEFAULT_THEME, limit=10):

@@ -72,7 +72,8 @@ def reddit_post_to_doc(post):
 def reddit_posts(theme=DEFAULT_THEME, limit=10):
     reddit = praw.Reddit(client_id=REDDIT_CLIENT_ID, client_secret=REDDIT_CLIENT_SECRET, user_agent=REDDIT_USER_AGENT)
     subreddit = reddit.subreddit(theme)
-    return [reddit_post_to_doc(post) for post in subreddit.new(limit=limit)]
+    filtered_posts = list(filter(lambda post: len(post.selftext) > 100, subreddit.new(limit=limit)))
+    return [reddit_post_to_doc(post) for post in filtered_posts]
 
 
 def parse_arxiv_date(date):
@@ -92,7 +93,9 @@ def arxiv_entry_to_doc(entry):
 def arxiv_posts(theme=DEFAULT_THEME, limit=10):
     url = 'http://export.arxiv.org/api/query?search_query=all:{}&start=0&max_results={}'.format(theme, limit)
     data = urllib.request.urlopen(url).read()
-    return [arxiv_entry_to_doc(entry) for entry in xmltodict.parse(data)['feed']['entry']]
+    parsed_data = xmltodict.parse(data)
+    filtered_entries = list(filter(lambda entry: len(entry['summary']) > 100, parsed_data['feed']['entry']))
+    return [arxiv_entry_to_doc(entry) for entry in filtered_entries]
 
 
 if __name__ == "__main__":
