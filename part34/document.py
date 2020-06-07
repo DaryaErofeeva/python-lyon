@@ -1,6 +1,9 @@
 from collections import OrderedDict
 
+from gensim.summarization.summarizer import summarize
 from praw.reddit import Submission
+
+from part1.script import format_doc
 from part2.script import unix_time_to_date, parse_arxiv_date
 
 
@@ -59,6 +62,12 @@ class Document:
 
     def print(self):
         print(self)
+
+    def get_summarization(self):
+        summarize(self.formatted_doc())
+
+    def formatted_doc(self):
+        return format_doc(self.__title, self.__text)
 
 
 class RedditDocument(Document):

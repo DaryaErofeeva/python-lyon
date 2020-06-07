@@ -3,7 +3,7 @@ import urllib.request
 import praw
 import xmltodict
 
-from part3.document import RedditDocument, ArxivDocument
+from part34.document import RedditDocument, ArxivDocument
 
 DEFAULT_THEME = 'Minecraft'
 REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')

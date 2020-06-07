@@ -1,6 +1,18 @@
+import re
+
 from part2.script import Author
-from part3.corpus import Corpus
-from part3.factory import DocumentsFactory
+from part34.corpus import Corpus
+from part34.factory import DocumentsFactory
+
+
+def nettoyer_texte(text):
+    """
+    4.4
+    :param text: string to clean
+    :return: only alpha symbols from input text in lower case
+    """
+    return re.sub(r'[^a-zA-Z]+', ' ', text)
+
 
 if __name__ == "__main__":
     docs = DocumentsFactory().create_documents()
@@ -24,3 +36,17 @@ if __name__ == "__main__":
 
     corpus = Corpus('Corpus', authors, id2aut, collection, id2doc, len(collection), len(authors))
     corpus.print()
+
+    print('\n========================= 4.1 =========================')
+    print(corpus.search('Minecraft'))
+
+    print('\n========================= 4.2 =========================')
+    print(corpus.concorde('Minecraft', 7))
+
+    print('\n========================= 4.3 =========================')
+    print(corpus.collection[0].get_summarization())
+
+    print('\n========================= 4.4 =========================')
+    print(nettoyer_texte('Minecraft 2.0 hello, duuude'))
+
+    corpus.stats(6)
