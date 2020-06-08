@@ -1,20 +1,17 @@
-import re
-
 from part2.script import Author
-from part34.corpus import Corpus
+from part34.corpus import Corpus, nettoyer_texte
 from part34.factory import DocumentsFactory
 
-
-def nettoyer_texte(text):
-    """
-    4.4
-    :param text: string to clean
-    :return: only alpha symbols from input text in lower case
-    """
-    return re.sub(r'[^a-zA-Z]+', ' ', text)
-
-
 if __name__ == "__main__":
+    print('\n+++++++++++++++++++++++ PART 3 +++++++++++++++++++++++')
+
+    print('=================== 3.1 | 3.4 | 3.5 ===================')
+    print(DocumentsFactory.reddit_documents('University', 5)[0])
+
+    print('\n=================== 3.2 | 3.4 | 3.5 ===================')
+    print(DocumentsFactory.arxiv_documents('University', 5)[0])
+
+    print('\n====================== 3.3 | 3.5 ======================')
     docs = DocumentsFactory().create_documents()
     collection = {}  # alternative way {i: docs[i] for i in range(len(docs))}
     authors = {}
@@ -29,15 +26,14 @@ if __name__ == "__main__":
             authors[len(authors)] = author
 
     id2doc = {key: value.get_title() for key, value in collection.items()}
-    print(id2doc)
-
     id2aut = {key: value.name for key, value in authors.items()}
-    print(id2aut)
 
     corpus = Corpus('Corpus', authors, id2aut, collection, id2doc, len(collection), len(authors))
-    corpus.print()
+    print(corpus)
 
-    print('\n========================= 4.1 =========================')
+    print('\n+++++++++++++++++++++++ PART 4 +++++++++++++++++++++++')
+
+    print('========================= 4.1 =========================')
     print(corpus.search('Minecraft'))
 
     print('\n========================= 4.2 =========================')
@@ -49,4 +45,4 @@ if __name__ == "__main__":
     print('\n========================= 4.4 =========================')
     print(nettoyer_texte('Minecraft 2.0 hello, duuude'))
 
-    corpus.stats(6)
+    corpus.stats(7)

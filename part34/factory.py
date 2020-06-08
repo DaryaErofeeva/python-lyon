@@ -12,6 +12,9 @@ REDDIT_USER_AGENT = os.getenv('REDDIT_USER_AGENT')
 
 
 class DocumentsFactory:
+    """
+    3.5
+    """
     @staticmethod
     def reddit_documents(theme=DEFAULT_THEME, limit=10):
         reddit = praw.Reddit(client_id=REDDIT_CLIENT_ID, client_secret=REDDIT_CLIENT_SECRET,

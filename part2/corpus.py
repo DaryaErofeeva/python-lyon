@@ -3,6 +3,7 @@ import pickle
 
 class Corpus:
     """
+    2.7
     name - name
     author - dictionary of instances of class Author
     id2aut - dictionary of authors' indexes
@@ -22,12 +23,26 @@ class Corpus:
         self.nauth = nauth
 
     def print(self, limit=5):
+        """
+        2.8
+        Sorts documents by date and title
+        :param limit: amount of docs to return
+        :return: list of sorted docs of length 'limit'
+        """
         sorted_docs = sorted(self.collection.values(), key=lambda doc: (doc.date, doc.title))[:limit]
         print(*sorted_docs)
 
     def __repr__(self):
+        """
+        2.8
+        :return: collection that presents corpus
+        """
         return {'name': self.name, 'author': list(self.id2aut.values()), 'docs': list(self.id2doc.values())}
 
-    def save(self):
-        with open('data.pickle', 'wb') as f:
+    def save(self, filename):
+        """
+        2.9
+        :param filename: filename where corpus should be saved
+        """
+        with open(filename, 'wb') as f:
             pickle.dump(self, f)

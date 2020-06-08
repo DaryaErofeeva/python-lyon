@@ -13,9 +13,12 @@ REDDIT_USER_AGENT = os.getenv('REDDIT_USER_AGENT')
 
 ARXIV_DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
+PICKLE_FILE_NAME = 'data.pickle'
+
 
 class Document:
     """
+    2.1
     title - title
     author - author(s) name(s)
     date - publication date
@@ -39,6 +42,7 @@ class Document:
 
 class Author:
     """
+    2.4
     name - name
     ndoc - docs count
     publications - dictionary of publications
@@ -99,6 +103,13 @@ def arxiv_posts(theme=DEFAULT_THEME, limit=10):
 
 
 if __name__ == "__main__":
+    print('\n+++++++++++++++++++++++ PART 2 +++++++++++++++++++++++')
+
+    print('====================== 2.1 | 2.2 ======================')
+    print(Document('test title', 'test author', datetime.now(), 'http://test_url', 'test text'))
+
+    print('\n========================= 2.3 =========================')
+
     docs = reddit_posts() + arxiv_posts()
 
     collection = {}  # alternative way {i: docs[i] for i in range(len(docs))}
@@ -115,23 +126,33 @@ if __name__ == "__main__":
                 author.add(docs[index])
                 authors[len(authors)] = author
 
+    print(collection)
+
     id2doc = {key: value.title for key, value in collection.items()}
     print(id2doc)
+
+    print('\n=================== 2.4 | 2.5 | 2.6 ===================')
+    print(authors)
 
     id2aut = {key: value.name for key, value in authors.items()}
     print(id2aut)
 
+    print('\n====================== 2.7 | 2.8 ======================')
     corpus = Corpus('Corpus', authors, id2aut, collection, id2doc, len(collection), len(authors))
+    print('----------------------- __repr__ ----------------------')
+    print(corpus.__repr__())
+    print('Afficher les élément du corpus triés selon la date et le titre')
     print(corpus.print())
 
-    print('\n\nSerializing corpus...')
-    corpus.save()
+    print('\n========================= 2.9 =========================')
+    print('Serializing corpus...')
+    corpus.save(PICKLE_FILE_NAME)
     print('Corpus serialized')
     print('Removing corpus instance...')
     del corpus
     print('Corpus instance removed')
     print('Deserializing corpus')
-    with open('data.pickle', 'rb') as f:
+    with open(PICKLE_FILE_NAME, 'rb') as f:
         corpus = pickle.load(f)
     print('Corpus deserialized')
     corpus.print()

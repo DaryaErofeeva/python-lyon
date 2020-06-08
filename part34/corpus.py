@@ -7,6 +7,15 @@ from pandas import DataFrame, Series
 from part1.script import join_docs
 
 
+def nettoyer_texte(text):
+    """
+    4.4
+    :param text: string to clean
+    :return: only alpha symbols from input text in lower case
+    """
+    return re.sub(r'[^a-zA-Z]+', ' ', text)
+
+
 class Corpus:
     """
     name - name
@@ -34,6 +43,9 @@ class Corpus:
 
     def __repr__(self):
         return {'name': self.name, 'author': list(self.id2aut.values()), 'docs': list(self.id2doc.values())}
+
+    def __str__(self):
+        return str(self.__repr__())
 
     def save(self):
         with open('data.pickle', 'wb') as f:
@@ -66,15 +78,18 @@ class Corpus:
 
     def stats(self, n):
         """
-        4.4, 4.5, 4.6, 4.7
+        4.5, 4.6, 4.7
         :param n: amount of top frequent words to print
         """
         vocabulaire = {}
         words = []
+        vocabulaire_words = []
         for key, value in self.collection.items():
-            value_words = value.formatted_doc().split(' ')
-            vocabulaire[key] = set(value_words)
+            value_words = nettoyer_texte(value.formatted_doc()).split(' ')
+            value_uniq_words = set(value_words)
+            vocabulaire[key] = value_uniq_words
             words += value_words
+            vocabulaire_words += value_uniq_words
 
         print('\n========================= 4.5 =========================')
         print(vocabulaire)
@@ -84,9 +99,8 @@ class Corpus:
         print(freq)
 
         print('\n========================= 4.7 =========================')
-        vocabulaire_words = list(itertools.chain.from_iterable(vocabulaire.values()))
         doc_freq = Series(vocabulaire_words).value_counts().rename_axis('word').to_frame('document frequency')
         print(freq.join(doc_freq))
 
-        print('Le nombre de mots différents dans le corpus: {}'.format(len(freq)))
-        print('Les {} mots les plus fréquents: {}'.format(n, freq.axes[0].tolist()[:n]))
+        print('\nLe nombre de mots différents dans le corpus: {}'.format(len(freq)))
+        print('\nLes {} mots les plus fréquents: {}'.format(n, freq.axes[0].tolist()[:n]))

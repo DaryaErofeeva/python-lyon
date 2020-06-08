@@ -54,6 +54,9 @@ class Document:
         self.__text = text
 
     def get_type(self):
+        """
+        3.4
+        """
         pass
 
     def __str__(self):
@@ -64,7 +67,7 @@ class Document:
         print(self)
 
     def get_summarization(self):
-        summarize(self.formatted_doc())
+        return summarize(self.formatted_doc())
 
     def formatted_doc(self):
         return format_doc(self.__title, self.__text)
@@ -72,6 +75,7 @@ class Document:
 
 class RedditDocument(Document):
     """
+    3.1
     Additional fields:
     edited - whether or not the submission has been edited
     score - the number of upvotes for the submission
@@ -95,6 +99,10 @@ class RedditDocument(Document):
         self.__score = score
 
     def get_type(self):
+        """
+        3.4
+        :return: document type
+        """
         return 'Reddit'
 
     def __str__(self):
@@ -103,6 +111,7 @@ class RedditDocument(Document):
 
 class ArxivDocument(Document):
     """
+    3.2
     co_authors - list of co-authors
     """
 
@@ -129,6 +138,10 @@ class ArxivDocument(Document):
         self.__co_authors.remove(co_author)
 
     def get_type(self):
+        """
+        3.4
+        :return: document type
+        """
         return 'Arxiv'
 
     def __str__(self):

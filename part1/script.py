@@ -10,12 +10,24 @@ REDDIT_USER_AGENT = os.getenv('REDDIT_USER_AGENT')
 
 
 def reddit_posts(theme=DEFAULT_THEME, limit=10):
+    """
+    1.1
+    :param theme: posts theme
+    :param limit: number of posts to search
+    :return: list of reddit posts by theme
+    """
     reddit = praw.Reddit(client_id=REDDIT_CLIENT_ID, client_secret=REDDIT_CLIENT_SECRET, user_agent=REDDIT_USER_AGENT)
     subreddit = reddit.subreddit(theme)
     return [format_doc(post.title, post.selftext) for post in subreddit.new(limit=limit)]
 
 
 def arxiv_posts(theme=DEFAULT_THEME, limit=10):
+    """
+    1.2
+    :param theme: posts theme
+    :param limit: number of posts to search
+    :return: list of arxiv posts by theme
+    """
     url = 'http://export.arxiv.org/api/query?search_query=all:{}&start=0&max_results={}'.format(theme, limit)
     data = urllib.request.urlopen(url).read()
     return [format_doc(entry['title'], entry['summary']) for entry in xmltodict.parse(data)['feed']['entry']]
@@ -53,9 +65,18 @@ def join_docs(docs):
 
 
 if __name__ == "__main__":
-    docs = reddit_posts() + arxiv_posts()
-    docs = remove_short(docs)
-    print(*docs, sep="\n")
+    print('\n+++++++++++++++++++++++ PART 1 +++++++++++++++++++++++')
+
+    print('========================= 1.1 =========================')
+    docs = reddit_posts()
+    print(*docs, sep='\n')
+
+    print('\n========================= 1.2 =========================')
+    docs += arxiv_posts()
+    print(*docs, sep='\n')
+
+    print('\n========================= 1.3 =========================')
+    print('La taille de corpus: {}'.format(len(docs)))
 
     wc = [words_count(doc) for doc in docs]
     print('\nWords count: {}'.format(wc))
@@ -65,4 +86,8 @@ if __name__ == "__main__":
     print('\nPhrases count: {}'.format(pc))
     print('Total phrases count: {}'.format(sum(pc)))
 
-    print('Joined text:\n{}'.format(join_docs(docs)))
+    docs = remove_short(docs)
+    print('\nAprès supprimant tous les documents contenant moins de 100 caractères')
+    print('La taille de corpus: {}'.format(len(docs)))
+
+    print('Une unique chaîne de caractère contenant tous les documents :\n{}'.format(join_docs(docs)))
