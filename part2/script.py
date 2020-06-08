@@ -126,16 +126,21 @@ if __name__ == "__main__":
                 author.add(docs[index])
                 authors[len(authors)] = author
 
-    print(collection)
+    id2doc = {key: value.title for key, value in collection.items()}
+    for key, value in collection.items():
+        print("{}, {}".format(key, value))
 
     id2doc = {key: value.title for key, value in collection.items()}
-    print(id2doc)
+    for key, value in id2doc.items():
+        print("{}, {}".format(key, value))
 
     print('\n=================== 2.4 | 2.5 | 2.6 ===================')
-    print(authors)
+    for key, value in authors.items():
+        print("{}, {}".format(key, value))
 
     id2aut = {key: value.name for key, value in authors.items()}
-    print(id2aut)
+    for key, value in id2aut.items():
+        print("{}, {}".format(key, value))
 
     print('\n====================== 2.7 | 2.8 ======================')
     corpus = Corpus('Corpus', authors, id2aut, collection, id2doc, len(collection), len(authors))
